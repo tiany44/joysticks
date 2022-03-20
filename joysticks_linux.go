@@ -1,7 +1,7 @@
 //go:build linux
 // +build linux
 
-package joystick
+package joysticks
 
 import (
 	"encoding/binary"

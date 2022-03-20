@@ -179,54 +179,27 @@ func (d HID) ParcelOutEvents() {
 				}
 			}
 			if c, ok := d.Events[eventSignature{hatPosition, h.number}]; ok {
-				switch h.axis {
-				case 1:
-					c <- CoordsEvent{when{toDuration(evt.Time)}, v, d.HatAxes[evt.Index+1].value}
-				case 2:
-					c <- CoordsEvent{when{toDuration(evt.Time)}, d.HatAxes[evt.Index-1].value, v}
-				}
+				c <- CoordsEvent{when{toDuration(evt.Time)}, v, d.HatAxes[evt.Index].value}
 			}
 			if c, ok := d.Events[eventSignature{hatAngle, h.number}]; ok {
-				switch h.axis {
-				case 1:
-					c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(d.HatAxes[evt.Index+1].value), float64(v)))}
-				case 2:
-					c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(v), float64(d.HatAxes[evt.Index-1].value)))}
-				}
+				c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(d.HatAxes[evt.Index].value), float64(v)))}
 			}
 			if c, ok := d.Events[eventSignature{hatRadius, h.number}]; ok {
-				switch h.axis {
-				case 1:
-					c <- RadiusEvent{when{toDuration(evt.Time)}, float32(math.Sqrt(float64(d.HatAxes[evt.Index+1].value)*float64(d.HatAxes[evt.Index+1].value) + float64(v)*float64(v)))}
-				case 2:
-					c <- RadiusEvent{when{toDuration(evt.Time)}, float32(math.Sqrt(float64(v)*float64(v) + float64(d.HatAxes[evt.Index-1].value)*float64(d.HatAxes[evt.Index-1].value)))}
-				}
+				c <- RadiusEvent{when{toDuration(evt.Time)}, float32(math.Sqrt(float64(d.HatAxes[evt.Index].value)*float64(d.HatAxes[evt.Index].value) + float64(v)*float64(v)))}
 			}
 			if c, ok := d.Events[eventSignature{hatEdge, h.number}]; ok {
-				// fmt.Println(v,h)
 				if (v == 1 || v == -1) && h.value != 1 && h.value != -1 {
-					switch h.axis {
-					case 1:
-						c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(d.HatAxes[evt.Index+1].value), float64(v)))}
-					case 2:
-						c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(v), float64(d.HatAxes[evt.Index-1].value)))}
-					}
+					c <- AngleEvent{when{toDuration(evt.Time)}, float32(math.Atan2(float64(d.HatAxes[evt.Index].value), float64(v)))}
 				}
 			}
 			if c, ok := d.Events[eventSignature{hatCentered, h.number}]; ok {
 				if v == 0 && h.value != 0 {
-					switch h.axis {
-					case 2:
-						if d.HatAxes[evt.Index-1].value == 0 {
-							c <- when{toDuration(evt.Time)}
-						}
-					case 1:
-						if d.HatAxes[evt.Index+1].value == 0 {
-							c <- when{toDuration(evt.Time)}
-						}
+					if d.HatAxes[evt.Index].value == 0 {
+						c <- when{toDuration(evt.Time)}
 					}
 				}
 			}
+
 			d.eventsLock.RUnlock()
 			d.hatLock.RUnlock()
 

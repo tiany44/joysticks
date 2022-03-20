@@ -90,6 +90,10 @@ type HatEvent struct {
 	value  float32
 }
 
+func (e HatEvent) Value () float32 {
+	return e.value
+}
+
 // Hat position event type. X,Y{-1...1}
 type CoordsEvent struct {
 	when
